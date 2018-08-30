@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+ <head>
+  <meta charset="utf-8">
+  <title> ピアノロール </title>
+  <style>
+  table { border-collapse: collapse; }
+  td {
+   width: 50px;
+   height: 25px;
+   border: solid 1px;
+  }
+  </style>
+ </head>
+ <body>
+
+  <div style="overflow-y:auto;">
+   <table border="0" width="1058">
+    <tr>
+     <td>
+      <table id="pianoTBL" width="80"></table>
+     </td>
+     <td border="0">
+      <div style="overflow-x:auto;">
+       <table id="testTBL" width="1000"></table>
+      </div>
+     </td>
+    </tr>
+   </table>
+  </div>
+
+  <script>
+  var pnTbl = document.getElementById("pianoTBL");
+  var tstTbl = document.getElementById("testTBL");
+
+  var xmax = 20;
+  var ymax = 13;
+
+//赤いマスがどの高さにあるかを管理するための配列
+  var ary1 = new Array();
+  for(var i = 0; i < xmax; i++) {
+  	ary1[i] = -1;
+  }
+
+//同じマスを何度押したかを管理するための配列
+  var ary2 = new Array();
+  for(var i = 0; i < xmax; i++) {
+  	ary2[i] = 0;
+  }
+
+//テキストボックスを管理するための配列
+  var ary3 = new Array();
+  for(var i = 0; i < xmax; i++) {
+  	ary3[i] = 0;
+  }
+
+//歌詞を管理するための配列
+  var ary4 = new Array();
+  for(var i = 0; i < xmax; i++) {
+  	ary4[i] = 0;
+  }
+
+  function dotTable() {
+
+//鍵盤の描画
+   for(var y = 0; y < ymax; y++) {
+    var row = pnTbl.insertRow(-1);
+    var cell = row.insertCell(-1);
+   }
+
+   pnTbl.rows[0].cells[0].innerHTML = "ド"
+   pnTbl.rows[1].cells[0].innerHTML = "シ"
+   pnTbl.rows[2].cells[0].innerHTML = "ラ＃"
+   pnTbl.rows[3].cells[0].innerHTML = "ラ"
+   pnTbl.rows[4].cells[0].innerHTML = "ソ＃"
+   pnTbl.rows[5].cells[0].innerHTML = "ソ"
+   pnTbl.rows[6].cells[0].innerHTML = "ファ＃"
+   pnTbl.rows[7].cells[0].innerHTML = "ファ"
+   pnTbl.rows[8].cells[0].innerHTML = "ミ"
+   pnTbl.rows[9].cells[0].innerHTML = "レ＃"
+   pnTbl.rows[10].cells[0].innerHTML = "レ"
+   pnTbl.rows[11].cells[0].innerHTML = "ド＃"
+   pnTbl.rows[12].cells[0].innerHTML = "ド"
+
+//表の描画
+   for(var y = 0; y < ymax; y++) {
+    var row = tstTbl.insertRow(-1);
+    for(var x = 0; x < xmax; x++) {
+     var cell = row.insertCell(-1);
+     (function (u, v) {
+
+       //クリックしたときの動作
+       cell.onclick = function () {
+        if(ary1[u] == -1) {
+         this.style.backgroundColor = "red";
+         ary3[u] = document.createElement("input");
+         ary3[u].setAttribute("type", "text");
+         ary3[u].setAttribute("size", "1");
+         ary3[u].setAttribute("maxlength", "1");
+         this.appendChild(ary3[u]);
+         ary1[u] = v;
+        } else if(ary1[u] != v && ary2[u] != 2) {
+         this.style.backgroundColor = "red";
+         tstTbl.rows[ary1[u]].cells[u].style.backgroundColor = "white";
+         tstTbl.rows[ary1[u]].cells[u].removeChild(ary3[u]);
+         this.appendChild(ary3[u]);
+         ary1[u] = v;
+        } else if(ary1[u] != v && ary2[u] == 2) {
+         this.style.backgroundColor = "red";
+         tstTbl.rows[ary1[u]].cells[u].style.backgroundColor = "white";
+         tstTbl.rows[ary1[u]].cells[u].innerHTML = "";
+         this.innerHTML = ary4[u];
+         ary1[u] = v;
+        } else if(ary2[u] == 0) {
+         ary2[u]++;
+        } else if(ary2[u] == 1) {
+         ary4[u] = ary3[u].value;
+         ary3[u].value = "";
+         this.removeChild(ary3[u]);
+         this.innerHTML = ary4[u];
+         ary2[u]++;
+        } else {
+         this.style.backgroundColor = "white";
+         this.innerHTML = "";
+         ary1[u] = -1;
+         ary2[u] = 0;
+         ary4[u] = 0;
+        }
+      }
+     })(x, y);
+    }
+   }
+  }
+
+
+  window.onload = function() {
+    dotTable();
+  }
+  </script>
+ </body>
+</html>
